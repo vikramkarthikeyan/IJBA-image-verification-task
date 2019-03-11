@@ -1,5 +1,5 @@
 import pandas as pd
-import config
+from . import config
 
 def get_training_template_map(protocol):
     template_info = {}

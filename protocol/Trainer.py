@@ -7,64 +7,34 @@ import argparse
 import cv2
 import torch
 import torch.nn as nn
-import base_model
 
 from torchvision import datasets, transforms
 from torchvision import models
 from torch.autograd import Variable
 from torchsummary import summary
-from EarlyStopping import EarlyStopper
-from AverageMeter import AverageMeter
+from . import EarlyStopping
+from . import AverageMeter
 
 
-# Followed PyTorch's ImageNet documentation as Tiny ImageNet has just fewer classes
+# Followed PyTorch's ImageNet documentation
 # https://github.com/pytorch/examples/blob/master/imagenet/main.py
 class Trainer:
 
-    def __init__(self, training_batch_size=256, validation_batch_size=10, data="./tiny-imagenet-200/"):
+    def __init__(self, training_data, classes, training_batch_size=256, validation_batch_size=10): 
 
-        # Data loaders are written to reduce the number of images stored in-memory
-        self.train_batch_size = training_batch_size 
-        self.validation_batch_size = validation_batch_size
-
-        training_path = os.path.join(data, 'train')
-        validation_path = os.path.join(data, 'val/images') 
-
-        # Precomputed mean and std values acquired from ImageNet statistics
-        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-
-        # Perform Data Augmentation by Randomly Flipping Training Images
-        training_data = datasets.ImageFolder(training_path,
-                                        transform=transforms.Compose([#transforms.RandomResizedCrop(224),
-                                                                        transforms.RandomAffine(degrees=10),
-                                                                        transforms.RandomHorizontalFlip(),
-                                                                        transforms.ToTensor(),
-                                                                        normalize]))
-        # Get Validation Images
-        validation_data = datasets.ImageFolder(validation_path,
-                                            transform=transforms.Compose([#transforms.Resize(256),
-                                                                            #transforms.CenterCrop(224),
-                                                                            transforms.ToTensor(),
-                                                                            normalize]))
          # Create training dataloader
-        self.train_loader = torch.utils.data.DataLoader(training_data, batch_size=self.train_batch_size, shuffle=True,
+        self.train_loader = torch.utils.data.DataLoader(training_data, batch_size=training_batch_size, shuffle=True,
                                                              num_workers=5)
-        # Create validation dataloader
-        self.validation_loader = torch.utils.data.DataLoader(validation_data,
-                                                                  batch_size=self.validation_batch_size,
-                                                                  shuffle=False, num_workers=5)
 
-        self.class_names = training_data.classes
-        self.num_classes = len(training_data.classes)
-        self.early_stopper = EarlyStopper()
-
-        self.validation_accuracy = list()
+        self.classes = classes
+        self.num_classes = len(classes)
+        self.early_stopper = EarlyStopping.EarlyStopper()
     
     def train(self, model, criterion, optimizer, epoch, usegpu):
-        batch_time = AverageMeter()
-        losses = AverageMeter()
-        top1 = AverageMeter()
-        top5 = AverageMeter()
+        batch_time = AverageMeter.AverageMeter()
+        losses = AverageMeter.AverageMeter()
+        top1 = AverageMeter.AverageMeter()
+        top5 = AverageMeter.AverageMeter()
 
         # switch to train mode
         model.train()

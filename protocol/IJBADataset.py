@@ -20,7 +20,7 @@ class IJBADataset(Dataset):
         try:
             image = io.imread(self.split_frame.iloc[idx]['image_location'])
         except:
-            print "Image not found..so returning empty entry"
+            print("Image not found..so returning empty entry")
             return {}
         
 
