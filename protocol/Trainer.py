@@ -39,11 +39,12 @@ class Trainer:
         # switch to train mode
         model.train()
 
-        end = time.time()
+        start = time.time()
 
         for i, (data, target) in enumerate(self.train_loader):
 
             data, target = Variable(data), Variable(target, requires_grad=False)
+
 
             if usegpu:
                 data = data.cuda(non_blocking=True)
@@ -71,8 +72,8 @@ class Trainer:
             optimizer.step()
 
             # measure elapsed time
-            batch_time.update(time.time() - end)
-            end = time.time()
+            batch_time.update(time.time() - start)
+            start = time.time()
 
             print('\rTraining - Epoch [{:04d}] Batch [{:04d}/{:04d}]\t'
                     'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'

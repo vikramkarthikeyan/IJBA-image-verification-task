@@ -6,87 +6,144 @@ import torch.nn as nn
 # training accuracy decreases
 class Base_CNN(nn.Module):
 
-    def __init__(self, num_classes=200):
+    def __init__(self, num_classes):
 
         super(Base_CNN, self).__init__()
 
+        print("Initializing model")
+        print("Number of output classes:", num_classes)
+
         # Convolution Layer 1
-        self.conv1 = nn.Sequential(         # input shape (3, 64, 64)
+        self.conv1 = nn.Sequential(         
             nn.Conv2d(
-                in_channels=3,              # 3 channels for R,G,B in the image
-                out_channels=128,           
-                kernel_size=3,              # filter size 3*3 square kernel
-                stride=1,                   
-                padding=2,                  
-            ),                              # output shape (128, 68, 68)
-            nn.ReLU(inplace=True),                      # activation
-            nn.BatchNorm2d(128),
-            nn.MaxPool2d(kernel_size=2, stride=2),    # output shape (128, 34, 34)
+                in_channels=3,            
+                out_channels=32,           
+                kernel_size=3,             
+                stride=1                  
+            ),                             
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(32)
         )
 
-        output = ((64 - 3 + (2 * 2)) / 1) + 1
-        output = ((output - 2 + (2 * 0)) / 2) + 1
 
         # Convolution Layer 2
-        self.conv2 = nn.Sequential(         # input shape (128, 34, 34)
+        self.conv2 = nn.Sequential(
             nn.Conv2d(
-                in_channels=128, 
-                out_channels=128, 
+                in_channels=32, 
+                out_channels=64, 
                 kernel_size=3,
-                stride=1,
-                padding=2),                 # output shape (128, 38, 38)
-            nn.ReLU(inplace=True),                      # activation
-            nn.BatchNorm2d(128),
-            nn.MaxPool2d(kernel_size=2, stride=2),                # output shape (128, 19, 19)
+                stride=1),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(64),
+            nn.MaxPool2d(kernel_size=2, stride=2)
         )
 
-        output = ((output - 3 + (2 * 2)) / 1) + 1
-        output = ((output - 2 + (2 * 0)) / 2) + 1
 
         # Convolution Layer 3
-        self.conv3 = nn.Sequential(         # input shape (128, 19, 19)
+        self.conv3 = nn.Sequential(
             nn.Conv2d(
-                in_channels=128, 
-                out_channels=128, 
+                in_channels=64, 
+                out_channels=64, 
                 kernel_size=3,
-                stride=1,
-                padding=2),                 # output shape (128, 23, 23)
-            nn.ReLU(inplace=True),                      # activation
-            nn.BatchNorm2d(128),
-            nn.MaxPool2d(kernel_size=2, stride=2),                # output shape (128, 11, 11)
+                stride=1),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(64)
         )
 
-        output = ((output - 3 + (2 * 2)) / 1) + 1
-        output = ((output - 2 + (2 * 0)) / 2) + 1
 
         # Convolution Layer 4
-        self.conv4 = nn.Sequential(         # input shape (128, 11, 11)
+        self.conv4 = nn.Sequential(
             nn.Conv2d(
-                in_channels=128, 
+                in_channels=64, 
                 out_channels=128, 
                 kernel_size=3,
-                stride=1,
-                padding=2),                 # output shape (128, 15, 15)
-            nn.ReLU(inplace=True),                      # activation
+                stride=1),
+            nn.ReLU(inplace=True),
             nn.BatchNorm2d(128),
-            nn.MaxPool2d(kernel_size=2, stride=2),                # output shape (128, 7, 7)
+            nn.MaxPool2d(kernel_size=2, stride=2),
         )
 
-        output = ((output - 3 + (2 * 2)) / 1) + 1
-        output = ((output - 2 + (2 * 0)) / 2) + 1
 
-        output = 128 * output * output
+        # Convolution Layer 5
+        self.conv5 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=128, 
+                out_channels=96, 
+                kernel_size=3,
+                stride=1),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(96)
+        )
+
+
+        # Convolution Layer 6
+        self.conv6 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=96, 
+                out_channels=192, 
+                kernel_size=3,
+                stride=1),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(192),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
+
+        # Convolution Layer 7
+        self.conv7 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=192, 
+                out_channels=128, 
+                kernel_size=3,
+                stride=1),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(128)
+        )
+
+
+        # Convolution Layer 8
+        self.conv8 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=128, 
+                out_channels=256, 
+                kernel_size=3,
+                stride=1),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(256),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
+
+        # Convolution Layer 9
+        self.conv9 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=256, 
+                out_channels=160, 
+                kernel_size=3,
+                stride=1),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(160)
+        )
+
+
+        # Convolution Layer 10
+        self.conv10 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=160, 
+                out_channels=320, 
+                kernel_size=3,
+                stride=1),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(320),
+            nn.AvgPool2d(kernel_size=4, stride=1)
+        )
+
+        self.dropout = nn.Dropout2d(p=0.4)
         
         # Hidden layer for DNN
-        self.hidden = nn.Sequential(
-            nn.Linear(output, 1024),
-            nn.Softmax(1),
-            nn.BatchNorm1d(1024),
-            nn.Dropout(0.5)
+        self.out = nn.Sequential(
+            nn.Linear(320, num_classes),
+            nn.Softmax(1)
         )
 
-        # Output layer with a Linear Transformation
-        self.out = nn.Linear(1024, num_classes)
 
 
     def forward(self, x):
@@ -95,11 +152,19 @@ class Base_CNN(nn.Module):
         y = self.conv2(y)
         y = self.conv3(y)
         y = self.conv4(y)
+        y = self.conv5(y)
+        y = self.conv6(y)
+        y = self.conv7(y)
+        y = self.conv8(y)
+        y = self.conv9(y)
+        y = self.conv10(y)
+
+        print(y.shape)
 
         # Flatten output of convolution layers
         y = y.view(y.size(0), -1) 
+        print(y.shape)
 
-        y = self.hidden(y)
         y = self.out(y)
 
         return y
