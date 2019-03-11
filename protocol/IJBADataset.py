@@ -1,4 +1,5 @@
 from torch.utils.data import Dataset, DataLoader
+from skimage import io, transform
 
 class IJBADataset(Dataset):
 
@@ -16,7 +17,12 @@ class IJBADataset(Dataset):
         return len(self.split_frame)
 
     def __getitem__(self, idx):
-        image = io.imread(self.split_frame.iloc[idx]['image_location'])
+        try:
+            image = io.imread(self.split_frame.iloc[idx]['image_location'])
+        except:
+            print "Image not found..so returning empty entry"
+            return {}
+        
 
         sample = {'image': image, 'subject': self.split_frame.iloc[idx]['subject']}
 

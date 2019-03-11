@@ -1,10 +1,16 @@
 import pandas as pd
+import argparse
 
 from protocol import verification
 from tqdm import tqdm
 from protocol import IJBADataset
-from skimage import io, transform
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--split", help="The split number in the dataset",
+                    type=int)
+
+args = parser.parse_args()
 
 
 def generate_training_samples(template_directories):
@@ -20,15 +26,13 @@ def generate_training_samples(template_directories):
     return rows
 
 
-for split_number in range(1,11):
+if __name__ == "__main__":
+    split_number = args.split
 
     template_directories = verification.get_training_templates(split_number)
 
     samples = generate_training_samples(template_directories)
 
+    # Create IJBA dataset object
     training_set = IJBADataset.IJBADataset(samples)
 
-    print(len(training_set))
-
-# for i in range(len(training_set)):
-#     print training_set[i]
