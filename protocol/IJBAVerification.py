@@ -48,4 +48,4 @@ class IJBAVerification(Dataset):
         # if self.transform:
         #     sample = self.transform(sample)
 
-        return (images_1, images_2, subject_1, subject_2)
+        return (images_1, images_2, subject_1, subject_2, template_1, template_2)
