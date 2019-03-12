@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 from . import config
 
 def get_training_template_map(protocol):
@@ -14,7 +15,8 @@ def get_training_template_map(protocol):
 
         file_location = config.BASE_PATH + config.IMAGES_PATH + str(row['SUBJECT_ID']) + '/' + row['FILE']
 
-        template_info[template_id]['locations'].append(file_location)
+        if os.path.exists(file_location):
+            template_info[template_id]['locations'].append(file_location)
     
     return template_info
 
@@ -44,3 +46,13 @@ def get_validation_pairs(split):
     validation_pairs = convert_to_template_pairs(validation_protocol)
 
     return validation_pairs
+
+def get_validation_metadata(split):
+    # Get validation metadata info for corresponding split 
+    VALIDATION_METADATA_INFO_PATH = config.BASE_PATH + config.SPLIT_PATH + config.SPLIT_PATHS[split]
+
+    validation_metadata = pd.read_csv(VALIDATION_METADATA_INFO_PATH + config.VERIFY_METADATA_CSV_PREFIX + str(split)+ '.csv')
+
+    metadata = get_training_template_map(validation_metadata)
+
+    return metadata

@@ -20,10 +20,14 @@ from . import AverageMeter
 # https://github.com/pytorch/examples/blob/master/imagenet/main.py
 class Trainer:
 
-    def __init__(self, training_data, classes, training_batch_size=100, validation_batch_size=10): 
+    def __init__(self, training_data, validation_data, classes, training_batch_size=100, validation_batch_size=10): 
 
-         # Create training dataloader
+        # Create training dataloader
         self.train_loader = torch.utils.data.DataLoader(training_data, batch_size=training_batch_size, shuffle=True,
+                                                             num_workers=5)
+
+        # Create validation dataloader
+        self.validation_loader = torch.utils.data.DataLoader(validation_data, batch_size=validation_batch_size, shuffle=True,
                                                              num_workers=5)
 
         self.classes = classes
@@ -95,11 +99,11 @@ class Trainer:
 
 
     def validate(self, model, criterion, epoch, usegpu):
-        batch_time = AverageMeter()
-        losses = AverageMeter()
-        accuracy = AverageMeter()
-        top1 = AverageMeter()
-        top5 = AverageMeter()
+        batch_time = AverageMeter.AverageMeter()
+        losses = AverageMeter.AverageMeter()
+        accuracy = AverageMeter.AverageMeter()
+        top1 = AverageMeter.AverageMeter()
+        top5 = AverageMeter.AverageMeter()
 
         # switch to evaluate mode
         model.eval()
@@ -112,56 +116,58 @@ class Trainer:
 
         with torch.no_grad():
             end = time.time()
-            for i, (data, target) in enumerate(self.validation_loader):
+            for i, (template_1, template_2, subject_1, subject_2) in enumerate(self.validation_loader):
                 correct_predictions_epoch = 0
                 if usegpu:
                     data = data.cuda(non_blocking=True)
                     target = target.cuda(non_blocking=True)
+                
+                print(subject_1,subject_2)
 
                 # compute output
-                output = model(data)
-                loss = criterion(output, target)
-                validation_loss += loss
+            #     output = model(data)
+            #     loss = criterion(output, target)
+            #     validation_loss += loss
 
-                # To Measure Accuracy:
-                # Step 1: get index of maximum value among output classes
-                value, index = torch.max(output.data, 1) 
+            #     # To Measure Accuracy:
+            #     # Step 1: get index of maximum value among output classes
+            #     value, index = torch.max(output.data, 1) 
 
-                # Step 2: Compute total no of correct predictions 
-                for j in range(0, self.validation_batch_size):
-                    if index[j] == target.data[j]:
-                        correct_predictions += 1
-                        correct_predictions_epoch += 1
+            #     # Step 2: Compute total no of correct predictions 
+            #     for j in range(0, self.validation_batch_size):
+            #         if index[j] == target.data[j]:
+            #             correct_predictions += 1
+            #             correct_predictions_epoch += 1
 
-                # Step 3: Measure accuracy and record loss
-                losses.update(loss.item(), data.size(0))
-                accuracy.update(100 * correct_predictions_epoch/float(self.validation_batch_size))
-                acc1, acc5 = self.accuracy(output, target, topk=(1, 5))
-                top1.update(acc1[0], data.size(0))
-                top5.update(acc5[0], data.size(0))
+            #     # Step 3: Measure accuracy and record loss
+            #     losses.update(loss.item(), data.size(0))
+            #     accuracy.update(100 * correct_predictions_epoch/float(self.validation_batch_size))
+            #     acc1, acc5 = self.accuracy(output, target, topk=(1, 5))
+            #     top1.update(acc1[0], data.size(0))
+            #     top5.update(acc5[0], data.size(0))
 
-                # measure elapsed time
-                batch_time.update(time.time() - end)
-                end = time.time()
+            #     # measure elapsed time
+            #     batch_time.update(time.time() - end)
+            #     end = time.time()
 
-                print('\rValidation - Batch [{:04d}/{:04d}]\t'
-                    'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                        'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                        'Accuracy {accuracy.val} ({accuracy.avg})\t'.format(
-                        i, len(self.validation_loader), batch_time=batch_time,
-                        loss=losses, accuracy=accuracy), end="")
+            #     print('\rValidation - Batch [{:04d}/{:04d}]\t'
+            #         'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+            #             'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+            #             'Accuracy {accuracy.val} ({accuracy.avg})\t'.format(
+            #             i, len(self.validation_loader), batch_time=batch_time,
+            #             loss=losses, accuracy=accuracy), end="")
 
-            # average loss = sum of loss over all batches/num of batches
-            average_validation_loss = validation_loss / (
-                validation_size / self.validation_batch_size)
+            # # average loss = sum of loss over all batches/num of batches
+            # average_validation_loss = validation_loss / (
+            #     validation_size / self.validation_batch_size)
 
-            # calculate total accuracy for the current epoch
-            self.validation_accuracy_epoch = 100.0 * correct_predictions / (validation_size)
+            # # calculate total accuracy for the current epoch
+            # self.validation_accuracy_epoch = 100.0 * correct_predictions / (validation_size)
 
-            # add validation accuracy to list for visualization
-            self.validation_accuracy.append(self.validation_accuracy_epoch)
+            # # add validation accuracy to list for visualization
+            # self.validation_accuracy.append(self.validation_accuracy_epoch)
             
-            print("\nValidation Accuracy: Acc@1: {top1.avg:.3f}%, Acc@5: {top5.avg:.3f}%, Avg Loss: {loss:.6f}\n".format(top1=top1, top5=top5, loss=average_validation_loss))
+            # print("\nValidation Accuracy: Acc@1: {top1.avg:.3f}%, Acc@5: {top5.avg:.3f}%, Avg Loss: {loss:.6f}\n".format(top1=top1, top5=top5, loss=average_validation_loss))
 
         return top1.avg, top5.avg, validation_loss
 

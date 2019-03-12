@@ -8,9 +8,10 @@ import os
 from protocol import verification
 from tqdm import tqdm
 from protocol import IJBADataset
+from protocol import IJBAVerification
 from protocol import Trainer
 from torchsummary import summary
-
+from protocol import EarlyStopping
 
 parser = argparse.ArgumentParser()
 
@@ -59,10 +60,18 @@ if __name__ == "__main__":
     template_directories = verification.get_training_templates(split_number)
     samples, subjects = generate_training_samples(template_directories)
 
+    # Generate subject class mapping for training data
     subject_class_map, class_subject_map = generate_subject_class_mapping(subjects)
 
-    # Create IJBA dataset object
+    # Get Verification pairs
+    pairs = verification.get_validation_pairs(split_number)
+    metadata = verification.get_validation_metadata(split_number)
+
+    # Create IJBA dataset object for training
     training_set = IJBADataset.IJBADataset(samples)
+
+    # Create IJBA dataset object for validation
+    validation_set = IJBAVerification.IJBAVerification(pairs, metadata)
 
     # Initialize model
     model = model.Base_CNN(num_classes=len(subjects))
@@ -79,16 +88,26 @@ if __name__ == "__main__":
         print ("Using CPU as GPU is unavailable")  
 
     # Initialize Trainer and Data Loader for training
-    trainer = Trainer.Trainer(training_set, subjects)
+    trainer = Trainer.Trainer(training_set, validation_set, subjects)
 
     # Train the model
     summary(model, (3, 202, 203))
 
+    highest_accuracy = 0
+    highest_accuracy_5 = 0
+
     print("\nInitiating training...")
+
+    model_name = './models/split_' + str(split_number) + '_checkpoint.pth.tar'
 
     for epoch in range(0, EPOCHS):
     
+        # Train for one Epoch
         trainer.train(model, criterion, optimizer, epoch, use_gpu, subject_class_map, class_subject_map)
+
+        # Evaluate on the validation set
+        # accuracy, accuracy_5, val_loss = trainer.validate(model, criterion, epoch, use_gpu)
+        # break
 
         # Checkpointing the model after every epoch
         trainer.save_checkpoint({
@@ -96,7 +115,18 @@ if __name__ == "__main__":
                         'state_dict': model.state_dict(),
                         'best_accuracy': 0,
                         'optimizer' : optimizer.state_dict(),
-        })
+        }, model_name)
+
+        # If this epoch's model proves to be the best till now, save it as best model
+        # if accuracy == max(accuracy, self.highest_accuracy):
+        #     self.highest_accuracy = accuracy
+        #     self.highest_accuracy_5 = accuracy_5
+        #     self.trainer.save_checkpoint({
+        #             'epoch': epoch + 1,
+        #             'state_dict': self.model.state_dict(),
+        #             'best_accuracy': self.highest_accuracy,
+        #             'optimizer' : self.optimizer.state_dict()
+        #     },'./models/best_model.pth.tar')
 
 
 
