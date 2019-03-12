@@ -125,10 +125,10 @@ class Trainer:
                 print(subject_1,subject_2)
 
                 for i in range(len(template_1)):
-                    print i
-                    print template_1[i]
+                    print(i)
+                    print(template_1[i])
                     output = model.features(data)
-                    print output
+                    print(output)
 
 
                 # compute output
