@@ -117,6 +117,7 @@ class Trainer:
         with torch.no_grad():
             end = time.time()
             for i, (template_1, template_2, subject_1, subject_2) in enumerate(self.validation_loader):
+                
                 correct_predictions_epoch = 0
 
                 # template_1 = Variable(torch.from_numpy(np.array(template_1)))
@@ -129,17 +130,18 @@ class Trainer:
                 #     subject_1 = target.cuda(non_blocking=True)
                 #     subject_1 = target.cuda(non_blocking=True)
                 
-                print(subject_1,subject_2)
+                # print(template_1[0])
 
-                for i in range(len(template_1)):
+                # for i in range(len(template_1)):
 
-                    template_images = template_1[i]
-                    template_images = Variable(torch.from_numpy(np.array(template_images)))
-
-                    if usegpu:
-                        template_images = template_images.cuda(non_blocking=True)
-                    output = model.features(template_images)
-                    print(output)
+                template_images = template_1
+                template_images = Variable(torch.from_numpy(np.array(template_images)))
+                if usegpu:
+                    template_images = template_images.cuda(non_blocking=True)
+                output = model.features(template_images)
+                print(output)
+                value, index = torch.max(output.data, 1)
+                print(index)
 
 
                 # compute output
