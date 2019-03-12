@@ -40,6 +40,17 @@ def generate_training_samples(template_directories):
 
     return rows, subjects
 
+def generate_subject_class_mapping(subjects):
+    subject_class_map = {}
+    class_subject_map = {}
+    class_number = 0
+    for subject in subjects:
+        subject_class_map[subject] = class_number
+        class_subject_map[class_number] = subject
+        class_number += 1
+
+    return subject_class_map, class_subject_map
+
 
 if __name__ == "__main__":
     split_number = args.split
@@ -47,6 +58,8 @@ if __name__ == "__main__":
     # Get training set info from the respective csv file
     template_directories = verification.get_training_templates(split_number)
     samples, subjects = generate_training_samples(template_directories)
+
+    subject_class_map, class_subject_map = generate_subject_class_mapping(subjects)
 
     # Create IJBA dataset object
     training_set = IJBADataset.IJBADataset(samples)
@@ -70,6 +83,6 @@ if __name__ == "__main__":
 
     # Train the model
     summary(model, (3, 202, 203))
-    trainer.train(model, criterion, optimizer, EPOCHS, use_gpu)
+    trainer.train(model, criterion, optimizer, EPOCHS, use_gpu, subject_class_map, class_subject_map)
 
 

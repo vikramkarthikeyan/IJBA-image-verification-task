@@ -28,4 +28,8 @@ class IJBADataset(Dataset):
         # if self.transform:
         #     sample = self.transform(sample)
 
-        return (self.pil2tensor(image), self.split_frame.iloc[idx]['subject'])
+        tensor = self.pil2tensor(image)
+
+        # print(tensor.shape)
+
+        return (tensor, self.split_frame.iloc[idx]['subject'])

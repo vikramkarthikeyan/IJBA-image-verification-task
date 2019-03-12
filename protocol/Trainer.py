@@ -30,7 +30,14 @@ class Trainer:
         self.num_classes = len(classes)
         self.early_stopper = EarlyStopping.EarlyStopper()
     
-    def train(self, model, criterion, optimizer, epoch, usegpu):
+    def convert_subjects_to_classes(self, target, subject_class_map):
+        result = []
+        for t in target.numpy():
+            result.append(subject_class_map[t])
+        return result
+
+    
+    def train(self, model, criterion, optimizer, epoch, usegpu, subject_class_map, class_subject_map):
         batch_time = AverageMeter.AverageMeter()
         losses = AverageMeter.AverageMeter()
         top1 = AverageMeter.AverageMeter()
@@ -45,8 +52,7 @@ class Trainer:
 
             data, target = Variable(data), Variable(target, requires_grad=False)
 
-            print(target)
-
+            target = self.convert_subjects_to_classes(target, subject_class_map)
 
             if usegpu:
                 data = data.cuda(non_blocking=True)
