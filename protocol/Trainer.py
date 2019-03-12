@@ -34,7 +34,7 @@ class Trainer:
         result = []
         for t in target.numpy():
             result.append(subject_class_map[t])
-        return Variable(torch.from_numpy(result), requires_grad=False)
+        return Variable(torch.from_numpy(np.array(result)), requires_grad=False)
 
     
     def train(self, model, criterion, optimizer, epoch, usegpu, subject_class_map, class_subject_map):
@@ -47,6 +47,8 @@ class Trainer:
         model.train()
 
         start = time.time()
+
+        torch.cuda.empty_cache()
 
         for i, (data, target) in enumerate(self.train_loader):
 
