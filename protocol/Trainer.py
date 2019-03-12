@@ -20,7 +20,7 @@ from . import AverageMeter
 # https://github.com/pytorch/examples/blob/master/imagenet/main.py
 class Trainer:
 
-    def __init__(self, training_data, validation_data, classes, training_batch_size=100, validation_batch_size=10): 
+    def __init__(self, training_data, validation_data, classes, training_batch_size=128, validation_batch_size=1): 
 
         # Create training dataloader
         self.train_loader = torch.utils.data.DataLoader(training_data, batch_size=training_batch_size, shuffle=True,
@@ -98,7 +98,7 @@ class Trainer:
         print("\nTraining Accuracy: Acc@1: {top1.avg:.3f}%, Acc@5: {top5.avg:.3f}%".format(top1=top1, top5=top5))
 
 
-    def validate(self, model, criterion, epoch, usegpu):
+    def validate(self, model, epoch, usegpu):
         batch_time = AverageMeter.AverageMeter()
         losses = AverageMeter.AverageMeter()
         accuracy = AverageMeter.AverageMeter()
@@ -124,14 +124,21 @@ class Trainer:
                 
                 print(subject_1,subject_2)
 
+                for i in range(len(template_1)):
+                    print i
+                    print template_1[i]
+                    output = model.features(data)
+                    print output
+
+
                 # compute output
             #     output = model(data)
             #     loss = criterion(output, target)
             #     validation_loss += loss
 
-            #     # To Measure Accuracy:
-            #     # Step 1: get index of maximum value among output classes
-            #     value, index = torch.max(output.data, 1) 
+                # To Measure Accuracy:
+                # Step 1: get index of maximum value among output classes
+                value, index = torch.max(output.data, 1) 
 
             #     # Step 2: Compute total no of correct predictions 
             #     for j in range(0, self.validation_batch_size):

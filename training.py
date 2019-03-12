@@ -73,7 +73,8 @@ if __name__ == "__main__":
     validation_set = IJBAVerification.IJBAVerification(pairs, metadata)
 
     # Initialize model
-    model = model.Base_CNN(num_classes=len(subjects))
+    # model = model.Base_CNN(num_classes=len(subjects))
+    model = model.MyModel(num_classes=len(subjects))
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=SGD_MOMENTUM)
 
@@ -106,7 +107,7 @@ if __name__ == "__main__":
         trainer.train(model, criterion, optimizer, epoch, use_gpu, subject_class_map, class_subject_map)
 
         # Evaluate on the validation set
-        # accuracy, accuracy_5, val_loss = trainer.validate(model, criterion, epoch, use_gpu)
+        accuracy, accuracy_5, val_loss = trainer.validate(model, epoch, use_gpu)
         # break
 
         # Checkpointing the model after every epoch
