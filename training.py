@@ -83,6 +83,20 @@ if __name__ == "__main__":
 
     # Train the model
     summary(model, (3, 202, 203))
-    trainer.train(model, criterion, optimizer, EPOCHS, use_gpu, subject_class_map, class_subject_map)
+
+    print("\nInitiating training...")
+
+    for epoch in range(0, EPOCHS):
+    
+        trainer.train(model, criterion, optimizer, epoch, use_gpu, subject_class_map, class_subject_map)
+
+        # Checkpointing the model after every epoch
+        trainer.save_checkpoint({
+                        'epoch': epoch + 1,
+                        'state_dict': model.state_dict(),
+                        'best_accuracy': 0,
+                        'optimizer' : optimizer.state_dict(),
+        })
+
 
 
