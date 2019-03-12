@@ -4,6 +4,7 @@ from PIL import Image
 import torchvision.transforms as transforms
 import traceback
 import os
+import torch
 
 # https://www.cs.virginia.edu/~vicente/recognition/notebooks/image_processing_lab.html
 class IJBAVerification(Dataset):
@@ -44,8 +45,8 @@ class IJBAVerification(Dataset):
         except Exception:
             print(traceback.format_exc())
             return ([],[], subject_1, subject_2)
-
-        # if self.transform:
-        #     sample = self.transform(sample)
+    
+        images_1 = torch.stack(images_1)
+        images_2 = torch.stack(images_2)
 
         return (images_1, images_2, subject_1, subject_2, template_1, template_2)

@@ -20,7 +20,7 @@ from . import AverageMeter
 # https://github.com/pytorch/examples/blob/master/imagenet/main.py
 class Trainer:
 
-    def __init__(self, training_data, validation_data, classes, training_batch_size=128, validation_batch_size=1): 
+    def __init__(self, training_data, validation_data, classes, training_batch_size=2, validation_batch_size=1): 
 
         # Create training dataloader
         self.train_loader = torch.utils.data.DataLoader(training_data, batch_size=training_batch_size, shuffle=True,
@@ -55,6 +55,9 @@ class Trainer:
         torch.cuda.empty_cache()
 
         for i, (data, target) in enumerate(self.train_loader):
+
+            print(type(data))
+            print(data.shape)
 
             data, target = Variable(data), Variable(target, requires_grad=False)
 
@@ -94,6 +97,7 @@ class Trainer:
                         'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
                         epoch, i, len(self.train_loader), batch_time=batch_time,
                         loss=losses), end="")
+            break
         
         print("\nTraining Accuracy: Acc@1: {top1.avg:.3f}%, Acc@5: {top5.avg:.3f}%".format(top1=top1, top5=top5))
 
@@ -120,43 +124,19 @@ class Trainer:
 
                 correct_predictions_epoch = 0
 
-                # template_1 = Variable(torch.from_numpy(np.array(template_1)))
-                # template_2 = Variable(torch.from_numpy(np.array(template_2)))
-
-
-                # if usegpu:
-                #     template_1 = template_1.cuda(non_blocking=True)
-                #     template_2 = template_2.cuda(non_blocking=True)
-                #     subject_1 = target.cuda(non_blocking=True)
-                #     subject_1 = target.cuda(non_blocking=True)
-                
-                # print(template_1[0])
-
-                # for i in range(len(template_1)):
-
-                template_images = torch.stack(template_1)
-
-                print("Count of images in template:", len(template_images))
-                print("input shape:", template_images.shape)
-                template_images = Variable(template_images)
+                template_1 = Variable(template_1[0])
+                template_2 = Variable(template_2[0])
 
                 if usegpu:
-                    template_images = template_images.cuda(non_blocking=True)
+                    template_1 = template_1.cuda(non_blocking=True)
+                    template_2 = template_2.cuda(non_blocking=True)
 
-                output = model.features(template_images)
-                print(len(output))
-                value, index = torch.max(output.data, 1)
-                # print(index)
+                # Compute outputs of two templates
+                output_1 = model.features(template_1)
+                output_2 = model.features(template_2)
 
+                # Now fuse the outputs of all the images in each template together
 
-                # compute output
-            #     output = model(data)
-            #     loss = criterion(output, target)
-            #     validation_loss += loss
-
-                # To Measure Accuracy:
-                # Step 1: get index of maximum value among output classes
-                value, index = torch.max(output.data, 1) 
 
             #     # Step 2: Compute total no of correct predictions 
             #     for j in range(0, self.validation_batch_size):
