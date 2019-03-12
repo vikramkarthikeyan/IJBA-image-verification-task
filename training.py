@@ -48,7 +48,7 @@ if __name__ == "__main__":
     use_gpu = torch.cuda.is_available()
     # Initialize new model
     if self.use_gpu:
-    model = model.cuda()
+        model = model.cuda()
         print ("Using GPU")
     else:
         print ("Using CPU as GPU is unavailable")    
