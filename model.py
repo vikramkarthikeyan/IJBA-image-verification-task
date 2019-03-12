@@ -159,12 +159,9 @@ class Base_CNN(nn.Module):
         y = self.conv9(y)
         y = self.conv10(y)
 
-        print(y.shape)
-
         # Flatten output of convolution layers
         y = y.view(y.size(0), -1) 
-        print(y.shape)
-
+        
         y = self.out(y)
 
         return y

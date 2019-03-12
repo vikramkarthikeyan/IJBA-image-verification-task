@@ -45,6 +45,8 @@ class Trainer:
 
             data, target = Variable(data), Variable(target, requires_grad=False)
 
+            print(target)
+
 
             if usegpu:
                 data = data.cuda(non_blocking=True)
