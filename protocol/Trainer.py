@@ -34,7 +34,7 @@ class Trainer:
         result = []
         for t in target.numpy():
             result.append(subject_class_map[t])
-        return result
+        return Variable(result, requires_grad=False)
 
     
     def train(self, model, criterion, optimizer, epoch, usegpu, subject_class_map, class_subject_map):
