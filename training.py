@@ -23,7 +23,6 @@ args = parser.parse_args()
 # Hyperparameters
 LR = 0.01
 SGD_MOMENTUM = 0.9
-WEIGHT_DECAY = 0.00001
 EPOCHS = 50
 
 def generate_training_samples(template_directories):
@@ -76,7 +75,7 @@ if __name__ == "__main__":
     # Initialize model
     model = model.Base_CNN(num_classes=len(subjects))
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=SGD_MOMENTUM, weight_decay=WEIGHT_DECAY)
+    optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=SGD_MOMENTUM)
 
     print("\nChecking if a GPU is available...")
     use_gpu = torch.cuda.is_available()
@@ -99,6 +98,7 @@ if __name__ == "__main__":
     print("\nInitiating training...")
 
     model_name = './models/split_' + str(split_number) + '_checkpoint.pth.tar'
+    best_model_name = './models/best_split_' + str(split_number) + '_model.pth.tar''
 
     for epoch in range(0, EPOCHS):
     
@@ -126,7 +126,7 @@ if __name__ == "__main__":
         #             'state_dict': self.model.state_dict(),
         #             'best_accuracy': self.highest_accuracy,
         #             'optimizer' : self.optimizer.state_dict()
-        #     },'./models/best_model.pth.tar')
+        #     }, best_model_name)
 
 
 
