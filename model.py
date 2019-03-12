@@ -153,6 +153,8 @@ class CNN(nn.Module):
 
 class DNN(nn.Module):
     def __init__(self, num_classes):
+        super(DNN, self).__init__()
+
         # Hidden layer for DNN
         self.out = nn.Sequential(
             nn.Linear(320, num_classes),
@@ -164,6 +166,17 @@ class DNN(nn.Module):
         y = self.out(x)
 
         return y
+
+class MyModel(nn.Module):
+    def __init__(self, num_classes):
+        super(MyModel, self).__init__()
+
+        self.features = CNN(num_classes)
+        self.output = DNN(num_classes)
+    
+    def forward(self, x):
+        batch_size = x.size(0)
+        return self.output(self.features(x).view(batch_size, -1))
 
 class Base_CNN(nn.Module):
 
