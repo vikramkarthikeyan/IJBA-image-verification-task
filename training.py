@@ -44,6 +44,15 @@ def generate_training_samples(template_directories):
 if __name__ == "__main__":
     split_number = args.split
 
+    print("\nChecking if a GPU is available...")
+    use_gpu = torch.cuda.is_available()
+    # Initialize new model
+    if self.use_gpu:
+    model = model.cuda()
+        print ("Using GPU")
+    else:
+        print ("Using CPU as GPU is unavailable")    
+
     # Get training set info from the respective csv file
     template_directories = verification.get_training_templates(split_number)
     samples, subjects = generate_training_samples(template_directories)
@@ -61,6 +70,6 @@ if __name__ == "__main__":
 
     # Train the model
     summary(model, (3, 202, 203))
-    trainer.train(model, criterion, optimizer, EPOCHS, False)
+    trainer.train(model, criterion, optimizer, EPOCHS, use_gpu)
 
 
