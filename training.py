@@ -98,7 +98,7 @@ if __name__ == "__main__":
     print("\nInitiating training...")
 
     model_name = './models/split_' + str(split_number) + '_checkpoint.pth.tar'
-    best_model_name = './models/best_split_' + str(split_number) + '_model.pth.tar''
+    best_model_name = './models/best_split_' + str(split_number) + '_model.pth.tar'
 
     for epoch in range(0, EPOCHS):
     
