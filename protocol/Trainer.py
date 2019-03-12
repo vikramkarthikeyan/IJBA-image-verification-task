@@ -134,11 +134,11 @@ class Trainer:
 
                 # for i in range(len(template_1)):
 
-                template_images = template_1
+                template_images = torch.stack(template_1)
 
-                print("Count of images in template:", len(template_images), template_images.shape)
-                print("template id:", template_n1)
-                template_images = Variable(torch.from_numpy(np.array(template_images)))
+                print("Count of images in template:", len(template_images))
+                print("input shape:", template_images.shape)
+                template_images = Variable(template_images)
 
                 if usegpu:
                     template_images = template_images.cuda(non_blocking=True)

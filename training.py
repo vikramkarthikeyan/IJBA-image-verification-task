@@ -118,6 +118,8 @@ if __name__ == "__main__":
                         'optimizer' : optimizer.state_dict(),
         }, model_name)
 
+        break
+
         # If this epoch's model proves to be the best till now, save it as best model
         # if accuracy == max(accuracy, self.highest_accuracy):
         #     self.highest_accuracy = accuracy
