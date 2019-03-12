@@ -119,7 +119,8 @@ class Trainer:
             for i, (template_1, template_2, subject_1, subject_2) in enumerate(self.validation_loader):
                 correct_predictions_epoch = 0
                 if usegpu:
-                    data = data.cuda(non_blocking=True)
+                    template_1 = template_1.cuda(non_blocking=True)
+                    template_2 = template_2.cuda(non_blocking=True)
                     target = target.cuda(non_blocking=True)
                 
                 print(subject_1,subject_2)
@@ -127,7 +128,7 @@ class Trainer:
                 for i in range(len(template_1)):
                     print(i)
                     print(template_1[i])
-                    output = model.features(data)
+                    output = model.features(template_1[i])
                     print(output)
 
 
