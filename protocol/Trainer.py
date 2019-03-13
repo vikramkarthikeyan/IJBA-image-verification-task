@@ -108,23 +108,16 @@ class Trainer:
         return features/norm
 
     def validate(self, model, epoch, usegpu):
-        batch_time = AverageMeter.AverageMeter()
-        losses = AverageMeter.AverageMeter()
-        accuracy = AverageMeter.AverageMeter()
-        top1 = AverageMeter.AverageMeter()
-        top5 = AverageMeter.AverageMeter()
 
         # switch to evaluate mode
         model.eval()
-
-        validation_loss = 0
-        correct_predictions = 0
-        validation_size = len(self.validation_loader.dataset)
 
         print("\nRunning Verification Protocol")
 
         similarity_scores = []
         actual_scores = []
+
+        total_pairs = len(self.validation_loader.dataset)
 
         with torch.no_grad():
             for i, (template_1, template_2, subject_1, subject_2, template_n1, template_n2) in enumerate(self.validation_loader):
@@ -144,9 +137,6 @@ class Trainer:
                 output_1 = np.average(output_1.cpu().numpy(), axis=0).flatten().reshape(1, -1)
                 output_2 = np.average(output_2.cpu().numpy(), axis=0).flatten().reshape(1, -1)
 
-                #print(output_1)
-                #print(output_2)
-
                 # Normalize features before computing similarity
                 # output_1 = self.normalize(output_1)
                 # output_2 = self.normalize(output_2)
@@ -155,14 +145,22 @@ class Trainer:
                 cos_sim = dot(output_1, output_2.reshape(-1,1))/(norm(output_1)*norm(output_2))
                 #print(cos_sim)
                 similarity = cosine_similarity(output_1, output_2)
+                similarity = similarity[0][0]
 
-                similarity_scores.append(similarity[0][0])
-                if subject_1 == subject_2:
+                # bring the similarity score between 0 and 1
+                if similarity < 0:
+                    similarity = 0
+                elif similarity > 1:
+                    similarity = 1
+
+                similarity_scores.append(similarity)
+
+                if subject_1[0] == subject_2[0]:
                     actual_scores.append(1)
                 else:
                     actual_scores.append(0)
 
-                print("\rTemplate 1:{:04d}, Template 2:{:04d}, Subject 1:{:04d}, Subject 2:{:04d} - Similarity: {}".format(template_n1[0], template_n2[0], subject_1[0], subject_2[0], similarity[0][0]),end="")
+                print("\rPair({:05d}/{:05d})\tTemplate 1:{:04d}, Template 2:{:04d}, Subject 1:{:04d}, Subject 2:{:04d} - Similarity: {}".format(i, total_pairs, template_n1[0], template_n2[0], subject_1[0], subject_2[0], similarity),end="")
 
         return similarity_scores, actual_scores
 

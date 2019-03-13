@@ -1,0 +1,1 @@
+This folder contains the ROC curves and similarity output CSVs for all the splits
