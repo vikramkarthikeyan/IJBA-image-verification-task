@@ -23,7 +23,7 @@ args = parser.parse_args()
 # Hyperparameters
 LR = 0.01
 SGD_MOMENTUM = 0.9
-EPOCHS = 50
+EPOCHS = 15
 
 def generate_training_samples(template_directories):
     rows = []
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         trainer.train(model, criterion, optimizer, epoch, use_gpu, subject_class_map, class_subject_map)
 
         # Evaluate on the validation set
-        accuracy, accuracy_5, val_loss = trainer.validate(model, epoch, use_gpu)
+        similarity_scores = trainer.validate(model, epoch, use_gpu)
         # break
 
         # Checkpointing the model after every epoch
@@ -117,8 +117,6 @@ if __name__ == "__main__":
                         'best_accuracy': 0,
                         'optimizer' : optimizer.state_dict(),
         }, model_name)
-
-        break
 
         # If this epoch's model proves to be the best till now, save it as best model
         # if accuracy == max(accuracy, self.highest_accuracy):

@@ -14,6 +14,8 @@ from torch.autograd import Variable
 from torchsummary import summary
 from . import EarlyStopping
 from . import AverageMeter
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 
 # Followed PyTorch's ImageNet documentation
@@ -27,7 +29,7 @@ class Trainer:
                                                              num_workers=5)
 
         # Create validation dataloader
-        self.validation_loader = torch.utils.data.DataLoader(validation_data, batch_size=validation_batch_size, shuffle=True,
+        self.validation_loader = torch.utils.data.DataLoader(validation_data, batch_size=validation_batch_size, shuffle=False,
                                                              num_workers=5)
 
         self.classes = classes
@@ -101,6 +103,11 @@ class Trainer:
         
         print("\nTraining Accuracy: Acc@1: {top1.avg:.3f}%, Acc@5: {top5.avg:.3f}%".format(top1=top1, top5=top5))
 
+    def normalize(self, features):
+        norm = np.linalg.norm(features)
+        if norm == 0: 
+            return features
+        return features/norm
 
     def validate(self, model, epoch, usegpu):
         batch_time = AverageMeter.AverageMeter()
@@ -117,6 +124,8 @@ class Trainer:
         validation_size = len(self.validation_loader.dataset)
 
         print("\n")
+
+        similarity_scores = []
 
         with torch.no_grad():
             end = time.time()
@@ -135,46 +144,22 @@ class Trainer:
                 output_1 = model.features(template_1)
                 output_2 = model.features(template_2)
 
-                # Now fuse the outputs of all the images in each template together
+                # Compute average of all the feature vectors into a single feature vector
+                output_1 = np.average(output_1.numpy(), axis=0).flatten().reshape(1, -1)
+                output_2 = np.average(output_2.numpy(), axis=0).flatten().reshape(1, -1)
 
+                # Normalize features before computing similarity
+                output_1 = self.normalize(output_1)
+                output_2 = self.normalize(output_2)
 
-            #     # Step 2: Compute total no of correct predictions 
-            #     for j in range(0, self.validation_batch_size):
-            #         if index[j] == target.data[j]:
-            #             correct_predictions += 1
-            #             correct_predictions_epoch += 1
+                # Compute Cosine Similarity
+                similarity = cosine_similarity(output_1, output_2)
 
-            #     # Step 3: Measure accuracy and record loss
-            #     losses.update(loss.item(), data.size(0))
-            #     accuracy.update(100 * correct_predictions_epoch/float(self.validation_batch_size))
-            #     acc1, acc5 = self.accuracy(output, target, topk=(1, 5))
-            #     top1.update(acc1[0], data.size(0))
-            #     top5.update(acc5[0], data.size(0))
+                similarity_scores.append(similarity[0][0])
 
-            #     # measure elapsed time
-            #     batch_time.update(time.time() - end)
-            #     end = time.time()
+                print("Template 1:{}, Template 2:{}, Subject 1:{}, Subject 2:{} - Similarity: {}".format(template_n1[0], template_n2[0], subject_1[0], subject_2[0], similarity[0][0]))
 
-            #     print('\rValidation - Batch [{:04d}/{:04d}]\t'
-            #         'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-            #             'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-            #             'Accuracy {accuracy.val} ({accuracy.avg})\t'.format(
-            #             i, len(self.validation_loader), batch_time=batch_time,
-            #             loss=losses, accuracy=accuracy), end="")
-
-            # # average loss = sum of loss over all batches/num of batches
-            # average_validation_loss = validation_loss / (
-            #     validation_size / self.validation_batch_size)
-
-            # # calculate total accuracy for the current epoch
-            # self.validation_accuracy_epoch = 100.0 * correct_predictions / (validation_size)
-
-            # # add validation accuracy to list for visualization
-            # self.validation_accuracy.append(self.validation_accuracy_epoch)
-            
-            # print("\nValidation Accuracy: Acc@1: {top1.avg:.3f}%, Acc@5: {top5.avg:.3f}%, Avg Loss: {loss:.6f}\n".format(top1=top1, top5=top5, loss=average_validation_loss))
-
-        return top1.avg, top5.avg, validation_loss
+        return similarity_scores
 
 
     def save_checkpoint(self, state, filename='./models/checkpoint.pth.tar'):

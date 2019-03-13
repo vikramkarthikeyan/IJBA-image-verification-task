@@ -1,10 +1,11 @@
-from torch.utils.data import Dataset, DataLoader
-from skimage import io, transform
-from PIL import Image
 import torchvision.transforms as transforms
 import traceback
 import os
 import torch
+
+from torch.utils.data import Dataset, DataLoader
+from skimage import io, transform
+from PIL import Image
 
 # https://www.cs.virginia.edu/~vicente/recognition/notebooks/image_processing_lab.html
 class IJBAVerification(Dataset):
