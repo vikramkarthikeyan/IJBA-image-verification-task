@@ -24,7 +24,7 @@ args = parser.parse_args()
 # Hyperparameters
 LR = 0.01
 SGD_MOMENTUM = 0.9
-EPOCHS = 15
+EPOCHS = 100
 
 def generate_training_samples(template_directories):
     rows = []
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         # Train for one Epoch
         trainer.train(model, criterion, optimizer, epoch, use_gpu, subject_class_map, class_subject_map)
 
-        if epoch%10 == 0:
+        if epoch%20 == 0:
             # Evaluate on the verification set every 5 epochs
             similarity_scores, actual_scores = trainer.validate(model, epoch, use_gpu)
             print(similarity_scores, actual_scores)

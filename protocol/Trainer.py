@@ -144,8 +144,8 @@ class Trainer:
                 output_1 = np.average(output_1.cpu().numpy(), axis=0).flatten().reshape(1, -1)
                 output_2 = np.average(output_2.cpu().numpy(), axis=0).flatten().reshape(1, -1)
 
-                print(output_1)
-                print(output_2)
+                #print(output_1)
+                #print(output_2)
 
                 # Normalize features before computing similarity
                 # output_1 = self.normalize(output_1)
@@ -153,7 +153,7 @@ class Trainer:
 
                 # Compute Cosine Similarity
                 cos_sim = dot(output_1, output_2.reshape(-1,1))/(norm(output_1)*norm(output_2))
-                print(cos_sim)
+                #print(cos_sim)
                 similarity = cosine_similarity(output_1, output_2)
 
                 similarity_scores.append(similarity[0][0])
@@ -162,7 +162,7 @@ class Trainer:
                 else:
                     actual_scores.append(0)
 
-                # print("\rTemplate 1:{:04d}, Template 2:{:04d}, Subject 1:{:04d}, Subject 2:{:04d} - Similarity: {}".format(template_n1[0], template_n2[0], subject_1[0], subject_2[0], similarity[0][0]),end="")
+                print("\rTemplate 1:{:04d}, Template 2:{:04d}, Subject 1:{:04d}, Subject 2:{:04d} - Similarity: {}".format(template_n1[0], template_n2[0], subject_1[0], subject_2[0], similarity[0][0]),end="")
 
         return similarity_scores, actual_scores
 
