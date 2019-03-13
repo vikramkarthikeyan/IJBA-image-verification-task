@@ -22,7 +22,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 # https://github.com/pytorch/examples/blob/master/imagenet/main.py
 class Trainer:
 
-    def __init__(self, training_data, validation_data, classes, training_batch_size=2, validation_batch_size=1): 
+    def __init__(self, training_data, validation_data, classes, training_batch_size=128, validation_batch_size=1): 
 
         # Create training dataloader
         self.train_loader = torch.utils.data.DataLoader(training_data, batch_size=training_batch_size, shuffle=True,
