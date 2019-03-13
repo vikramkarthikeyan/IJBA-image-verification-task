@@ -20,7 +20,7 @@ def get_training_template_map(protocol):
     
     return template_info
 
-def convert_to_template_pairs(protocol):
+def convert_to_template_pairs(protocol, metadata):
     pairs = []
 
     for i, row in protocol.iterrows():
