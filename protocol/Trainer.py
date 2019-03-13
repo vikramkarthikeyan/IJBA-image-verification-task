@@ -15,6 +15,8 @@ from torchsummary import summary
 from . import EarlyStopping
 from . import AverageMeter
 from sklearn.metrics.pairwise import cosine_similarity
+from numpy import dot
+from numpy.linalg import norm
 
 
 
@@ -143,10 +145,12 @@ class Trainer:
                 output_2 = np.average(output_2.cpu().numpy(), axis=0).flatten().reshape(1, -1)
 
                 # Normalize features before computing similarity
-                output_1 = self.normalize(output_1)
-                output_2 = self.normalize(output_2)
+                # output_1 = self.normalize(output_1)
+                # output_2 = self.normalize(output_2)
 
                 # Compute Cosine Similarity
+                cos_sim = dot(output_1, output_2)/(norm(output_1)*norm(output_2))
+                print(cos_sim)
                 similarity = cosine_similarity(output_1, output_2)
 
                 similarity_scores.append(similarity[0][0])

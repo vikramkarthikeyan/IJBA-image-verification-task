@@ -107,7 +107,7 @@ if __name__ == "__main__":
         # Train for one Epoch
         trainer.train(model, criterion, optimizer, epoch, use_gpu, subject_class_map, class_subject_map)
 
-        if epoch%5 == 0:
+        if epoch%10 == 0:
             # Evaluate on the verification set every 5 epochs
             similarity_scores, actual_scores = trainer.validate(model, epoch, use_gpu)
             print(similarity_scores, actual_scores)
