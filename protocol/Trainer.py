@@ -119,7 +119,7 @@ class Trainer:
         correct_predictions = 0
         validation_size = len(self.validation_loader.dataset)
 
-        print("\n")
+        print("Running Verification Protocol")
 
         similarity_scores = []
 

@@ -96,7 +96,7 @@ if __name__ == "__main__":
     highest_accuracy = 0
     highest_accuracy_5 = 0
 
-    print("\nInitiating training...")
+    print("\nInitiating training...\n")
 
     model_name = './models/split_' + str(split_number) + '_checkpoint.pth.tar'
     best_model_name = './models/best_split_' + str(split_number) + '_model.pth.tar'
