@@ -119,16 +119,13 @@ class Trainer:
         correct_predictions = 0
         validation_size = len(self.validation_loader.dataset)
 
-        print("Running Verification Protocol")
+        print("\nRunning Verification Protocol")
 
         similarity_scores = []
         actual_scores = []
 
         with torch.no_grad():
-            end = time.time()
             for i, (template_1, template_2, subject_1, subject_2, template_n1, template_n2) in enumerate(self.validation_loader):
-
-                correct_predictions_epoch = 0
 
                 template_1 = Variable(template_1[0])
                 template_2 = Variable(template_2[0])

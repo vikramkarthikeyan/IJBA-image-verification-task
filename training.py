@@ -109,6 +109,9 @@ if __name__ == "__main__":
         if epoch%5 == 0:
             # Evaluate on the verification set every 5 epochs
             similarity_scores, actual_scores = trainer.validate(model, epoch, use_gpu)
+            print(similarity_scores, actual_scores)
+            correct_predictions = np.sum(a == b)
+            print("correct predictions",correct_predictions)
 
         # Checkpointing the model after every epoch
         trainer.save_checkpoint({
