@@ -18,13 +18,24 @@ from sklearn.metrics.pairwise import cosine_similarity
 from numpy import dot
 from numpy.linalg import norm
 
+def custom_collate(batch):
+
+    #(images_1, images_2, subject_1, subject_2, template_1, template_2)
+    images_1 = [item[0] for item in batch]
+    images_2 = [item[1] for item in batch]
+    subject_1 = torch.Tensor([item[2] for item in batch])
+    subject_2 = torch.Tensor([item[3] for item in batch])
+    template_1 = torch.Tensor([item[4] for item in batch])
+    template_2 = torch.Tensor([item[5] for item in batch])
+    return [images_1, images_2, subject_1, subject_2, template_1, template_2]
+
 
 
 # Followed PyTorch's ImageNet documentation
 # https://github.com/pytorch/examples/blob/master/imagenet/main.py
 class Trainer:
 
-    def __init__(self, training_data, validation_data, classes, training_batch_size=128, validation_batch_size=128): 
+    def __init__(self, training_data, validation_data, classes, training_batch_size=128, validation_batch_size=2): 
 
         # Create training dataloader
         self.train_loader = torch.utils.data.DataLoader(training_data, batch_size=training_batch_size, shuffle=True,
@@ -32,7 +43,7 @@ class Trainer:
 
         # Create validation dataloader
         self.validation_loader = torch.utils.data.DataLoader(validation_data, batch_size=validation_batch_size, shuffle=False,
-                                                             num_workers=5)
+                                                             collate_fn=custom_collate, num_workers=5)
 
         self.classes = classes
         self.num_classes = len(classes)
