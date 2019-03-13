@@ -8,7 +8,7 @@ def get_training_template_map(protocol):
     for i, row in protocol.iterrows():
         template_id = row['TEMPLATE_ID']
         
-        if template_id not in template_info:
+        if template_id not in template_info and os.path.exists(file_location):
             template_info[template_id] = {}
             template_info[template_id]['locations'] = []
             template_info[template_id]['subject'] = row['SUBJECT_ID']

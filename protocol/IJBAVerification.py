@@ -48,7 +48,6 @@ class IJBAVerification(Dataset):
             return ([],[], subject_1, subject_2)
     
         images_1 = torch.stack(images_1)
-        print(template_2)
         images_2 = torch.stack(images_2)
 
         return (images_1, images_2, subject_1, subject_2, template_1, template_2)
