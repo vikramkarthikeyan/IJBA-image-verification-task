@@ -145,8 +145,8 @@ class Trainer:
                 output_2 = model.features(template_2)
 
                 # Compute average of all the feature vectors into a single feature vector
-                output_1 = np.average(output_1.numpy(), axis=0).flatten().reshape(1, -1)
-                output_2 = np.average(output_2.numpy(), axis=0).flatten().reshape(1, -1)
+                output_1 = np.average(output_1.cpu().numpy(), axis=0).flatten().reshape(1, -1)
+                output_2 = np.average(output_2.cpu().numpy(), axis=0).flatten().reshape(1, -1)
 
                 # Normalize features before computing similarity
                 output_1 = self.normalize(output_1)
