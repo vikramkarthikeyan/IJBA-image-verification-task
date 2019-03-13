@@ -7,13 +7,13 @@ def get_training_template_map(protocol):
 
     for i, row in protocol.iterrows():
         template_id = row['TEMPLATE_ID']
+
+        file_location = config.BASE_PATH + config.IMAGES_PATH + str(row['SUBJECT_ID']) + '/' + row['FILE']
         
         if template_id not in template_info and os.path.exists(file_location):
             template_info[template_id] = {}
             template_info[template_id]['locations'] = []
             template_info[template_id]['subject'] = row['SUBJECT_ID']
-
-        file_location = config.BASE_PATH + config.IMAGES_PATH + str(row['SUBJECT_ID']) + '/' + row['FILE']
 
         if os.path.exists(file_location):
             template_info[template_id]['locations'].append(file_location)
