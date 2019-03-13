@@ -4,6 +4,7 @@ import torch.nn as nn
 import model
 import torch
 import os
+import numpy as np
 
 from protocol import verification
 from tqdm import tqdm
@@ -110,7 +111,7 @@ if __name__ == "__main__":
             # Evaluate on the verification set every 5 epochs
             similarity_scores, actual_scores = trainer.validate(model, epoch, use_gpu)
             print(similarity_scores, actual_scores)
-            correct_predictions = np.sum(a == b)
+            correct_predictions = np.sum(np.array(similarity_scores) == np.array(actual_scores))
             print("correct predictions",correct_predictions)
 
         # Checkpointing the model after every epoch
