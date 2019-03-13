@@ -122,6 +122,7 @@ class Trainer:
         print("Running Verification Protocol")
 
         similarity_scores = []
+        actual_scores = []
 
         with torch.no_grad():
             end = time.time()
@@ -152,10 +153,14 @@ class Trainer:
                 similarity = cosine_similarity(output_1, output_2)
 
                 similarity_scores.append(similarity[0][0])
+                if subject_1 == subject_2:
+                    actual_scores.append(1)
+                else:
+                    actual_scores.append(0)
 
                 print("\rTemplate 1:{:04d}, Template 2:{:04d}, Subject 1:{:04d}, Subject 2:{:04d} - Similarity: {}".format(template_n1[0], template_n2[0], subject_1[0], subject_2[0], similarity[0][0]),end="")
 
-        return similarity_scores
+        return similarity_scores, actual_scores
 
 
     def save_checkpoint(self, state, filename='./models/checkpoint.pth.tar'):

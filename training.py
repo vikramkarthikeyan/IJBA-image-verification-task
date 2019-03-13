@@ -106,8 +106,9 @@ if __name__ == "__main__":
         # Train for one Epoch
         trainer.train(model, criterion, optimizer, epoch, use_gpu, subject_class_map, class_subject_map)
 
-        # Evaluate on the validation set
-        similarity_scores = trainer.validate(model, epoch, use_gpu)
+        if epoch%5 == 0:
+            # Evaluate on the verification set every 5 epochs
+            similarity_scores, actual_scores = trainer.validate(model, epoch, use_gpu)
 
         # Checkpointing the model after every epoch
         trainer.save_checkpoint({
