@@ -24,7 +24,8 @@ def convert_to_template_pairs(protocol):
     pairs = []
 
     for i, row in protocol.iterrows():
-        pairs.append((row[0], row[1]))
+        if row[0] in metadata and row[1] in metadata:
+            pairs.append((row[0], row[1]))
 
     return pairs
 
@@ -37,13 +38,13 @@ def get_training_templates(split):
     templates = get_training_template_map(training_protocol)
     return templates
 
-def get_validation_pairs(split):
+def get_validation_pairs(split, metadata):
     # Get validation pair info for corresponding split
     VALIDATION_INFO_PATH = config.BASE_PATH + config.SPLIT_PATH + config.SPLIT_PATHS[split]
 
     validation_protocol = pd.read_csv(VALIDATION_INFO_PATH + config.VERIFY_CSV_PREFIX + str(split)+ '.csv', header=None)
 
-    validation_pairs = convert_to_template_pairs(validation_protocol)
+    validation_pairs = convert_to_template_pairs(validation_protocol, metadata)
 
     return validation_pairs
 

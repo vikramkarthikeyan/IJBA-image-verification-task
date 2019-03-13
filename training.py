@@ -63,8 +63,8 @@ if __name__ == "__main__":
     subject_class_map, class_subject_map = generate_subject_class_mapping(subjects)
 
     # Get Verification pairs
-    pairs = verification.get_validation_pairs(split_number)
     metadata = verification.get_validation_metadata(split_number)
+    pairs = verification.get_validation_pairs(split_number, metadata)
 
     # Create IJBA dataset object for training
     training_set = IJBADataset.IJBADataset(samples)
