@@ -108,7 +108,6 @@ if __name__ == "__main__":
 
         # Evaluate on the validation set
         similarity_scores = trainer.validate(model, epoch, use_gpu)
-        # break
 
         # Checkpointing the model after every epoch
         trainer.save_checkpoint({

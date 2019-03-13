@@ -58,9 +58,6 @@ class Trainer:
 
         for i, (data, target) in enumerate(self.train_loader):
 
-            print(type(data))
-            print(data.shape)
-
             data, target = Variable(data), Variable(target, requires_grad=False)
 
             target = self.convert_subjects_to_classes(target, subject_class_map)
@@ -99,7 +96,6 @@ class Trainer:
                         'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
                         epoch, i, len(self.train_loader), batch_time=batch_time,
                         loss=losses), end="")
-            break
         
         print("\nTraining Accuracy: Acc@1: {top1.avg:.3f}%, Acc@5: {top5.avg:.3f}%".format(top1=top1, top5=top5))
 
@@ -157,7 +153,7 @@ class Trainer:
 
                 similarity_scores.append(similarity[0][0])
 
-                print("Template 1:{}, Template 2:{}, Subject 1:{}, Subject 2:{} - Similarity: {}".format(template_n1[0], template_n2[0], subject_1[0], subject_2[0], similarity[0][0]))
+                print("\rTemplate 1:{:04d}, Template 2:{:04d}, Subject 1:{:04d}, Subject 2:{:04d} - Similarity: {}".format(template_n1[0], template_n2[0], subject_1[0], subject_2[0], similarity[0][0]),end="")
 
         return similarity_scores
 
