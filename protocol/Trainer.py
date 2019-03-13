@@ -24,7 +24,7 @@ from numpy.linalg import norm
 # https://github.com/pytorch/examples/blob/master/imagenet/main.py
 class Trainer:
 
-    def __init__(self, training_data, validation_data, classes, training_batch_size=128, validation_batch_size=1): 
+    def __init__(self, training_data, validation_data, classes, training_batch_size=128, validation_batch_size=128): 
 
         # Create training dataloader
         self.train_loader = torch.utils.data.DataLoader(training_data, batch_size=training_batch_size, shuffle=True,
@@ -117,50 +117,50 @@ class Trainer:
         similarity_scores = []
         actual_scores = []
 
-        total_pairs = len(self.validation_loader.dataset)
-
         with torch.no_grad():
             for i, (template_1, template_2, subject_1, subject_2, template_n1, template_n2) in enumerate(self.validation_loader):
 
-                template_1 = Variable(template_1[0])
-                template_2 = Variable(template_2[0])
+                for j in range(len(template_1)):
+            
+                    template_left = Variable(template_1[j])
+                    template_right = Variable(template_2[j])
 
-                if usegpu:
-                    template_1 = template_1.cuda(non_blocking=True)
-                    template_2 = template_2.cuda(non_blocking=True)
+                    if usegpu:
+                        template_left = template_left.cuda(non_blocking=True)
+                        template_right = template_right.cuda(non_blocking=True)
 
-                # Compute outputs of two templates
-                output_1 = model.features(template_1)
-                output_2 = model.features(template_2)
+                    # Compute outputs of two templates
+                    output_1 = model.features(template_left)
+                    output_2 = model.features(template_right)
 
-                # Compute average of all the feature vectors into a single feature vector
-                output_1 = np.average(output_1.cpu().numpy(), axis=0).flatten().reshape(1, -1)
-                output_2 = np.average(output_2.cpu().numpy(), axis=0).flatten().reshape(1, -1)
+                    # Compute average of all the feature vectors into a single feature vector
+                    output_1 = np.average(output_1.cpu().numpy(), axis=0).flatten().reshape(1, -1)
+                    output_2 = np.average(output_2.cpu().numpy(), axis=0).flatten().reshape(1, -1)
 
-                # Normalize features before computing similarity
-                # output_1 = self.normalize(output_1)
-                # output_2 = self.normalize(output_2)
+                    # Normalize features before computing similarity
+                    # output_1 = self.normalize(output_1)
+                    # output_2 = self.normalize(output_2)
 
-                # Compute Cosine Similarity
-                cos_sim = dot(output_1, output_2.reshape(-1,1))/(norm(output_1)*norm(output_2))
-                #print(cos_sim)
-                similarity = cosine_similarity(output_1, output_2)
-                similarity = similarity[0][0]
+                    # Compute Cosine Similarity
+                    cos_sim = dot(output_1, output_2.reshape(-1,1))/(norm(output_1)*norm(output_2))
+                    #print(cos_sim)
+                    similarity = cosine_similarity(output_1, output_2)
+                    similarity = similarity[0][0]
 
-                # bring the similarity score between 0 and 1
-                if similarity < 0:
-                    similarity = 0
-                elif similarity > 1:
-                    similarity = 1
+                    # bring the similarity score between 0 and 1
+                    if similarity < 0:
+                        similarity = 0
+                    elif similarity > 1:
+                        similarity = 1
 
-                similarity_scores.append(similarity)
+                    similarity_scores.append(similarity)
 
-                if subject_1[0] == subject_2[0]:
-                    actual_scores.append(1)
-                else:
-                    actual_scores.append(0)
+                    if subject_1[j] == subject_2[j]:
+                        actual_scores.append(1)
+                    else:
+                        actual_scores.append(0)
 
-                print("\rPair({:05d}/{:05d})\tTemplate 1:{:04d}, Template 2:{:04d}, Subject 1:{:04d}, Subject 2:{:04d} - Similarity: {}".format(i, total_pairs, template_n1[0], template_n2[0], subject_1[0], subject_2[0], similarity),end="")
+                print("\rPair Batch({:05d}/{:05d})".format(i, len(self.validation_loader)), end="")
 
         return similarity_scores, actual_scores
 
