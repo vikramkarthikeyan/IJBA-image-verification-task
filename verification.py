@@ -52,6 +52,19 @@ def plot_ROC(fpr, tpr, roc_auc, split_number):
     plt.legend(loc="lower right")
     plt.savefig('./ROC/split_' + str(split_number) + '.png')
 
+def save_results(pairs, actual_scores, cosine_scores, split_number):
+    templates_1 = []
+    templates_2 = []
+    for (template_1, template_2) in pairs:
+        templates_1.append(template_1)
+        templates_2.append(template_2)
+    
+    d = {'template_1': templates_1, 'template_2': templates_2, 'actual': actual_scores, 'cosine': cosine_scores}
+    
+    df = pd.DataFrame(data=d)
+
+    df.to_csv('./ROC/split_' + str(split_number) + '.csv')
+
 # For ROC: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_curve.html
 if __name__ == "__main__":
     split_number = args.split
@@ -103,6 +116,9 @@ if __name__ == "__main__":
 
     # Plot the ROC curve
     plot_ROC(fpr, tpr, roc_auc, split_number)
+
+    # Save the results as csv
+    save_results(pairs, actual_scores, similarity_scores, split_number)
 
     
 
