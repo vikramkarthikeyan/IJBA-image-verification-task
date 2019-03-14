@@ -134,6 +134,13 @@ class CNN(nn.Module):
             nn.BatchNorm2d(320),
             nn.AvgPool2d(kernel_size=4, stride=1)
         )
+
+        self.fc = nn.Sequential(
+            nn.Linear(320, 256),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            # nn.Linear(256, 1)
+        ) 
     
     def forward(self, x):
 
@@ -157,7 +164,7 @@ class DNN(nn.Module):
 
         # Hidden layer for DNN
         self.out = nn.Sequential(
-            nn.Linear(320, num_classes),
+            nn.Linear(256, num_classes),
             nn.Softmax(1)
         )
 

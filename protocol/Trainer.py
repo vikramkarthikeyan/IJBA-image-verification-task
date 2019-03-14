@@ -130,7 +130,7 @@ class Trainer:
 
         with torch.no_grad():
             for i, (template_1, template_2, subject_1, subject_2, template_n1, template_n2) in enumerate(self.validation_loader):
-
+                
                 for j in range(len(template_1)):
             
                     template_left = Variable(template_1[j])
@@ -148,21 +148,16 @@ class Trainer:
                     output_1 = np.average(output_1.cpu().numpy(), axis=0).flatten().reshape(1, -1)
                     output_2 = np.average(output_2.cpu().numpy(), axis=0).flatten().reshape(1, -1)
 
-                    # Normalize features before computing similarity
-                    # output_1 = self.normalize(output_1)
-                    # output_2 = self.normalize(output_2)
-
-                    # Compute Cosine Similarity
-                    cos_sim = dot(output_1, output_2.reshape(-1,1))/(norm(output_1)*norm(output_2))
-                    #print(cos_sim)
+                    # Compute Cosine Similarity with normalization in the formula
                     similarity = cosine_similarity(output_1, output_2)
                     similarity = similarity[0][0]
+                    print(similarity)
 
                     # bring the similarity score between 0 and 1
-                    if similarity < 0:
-                        similarity = 0
-                    elif similarity > 1:
-                        similarity = 1
+                    # if similarity < 0:
+                    #     similarity = 0
+                    # elif similarity > 1:
+                    #     similarity = 1
 
                     similarity_scores.append(similarity)
 
