@@ -138,7 +138,7 @@ class CNN(nn.Module):
         self.fc = nn.Sequential(
             nn.Linear(320, 256),
             nn.ReLU(),
-            nn.Dropout(0.4),
+            # nn.Dropout(0.4),
             # nn.Linear(256, 1)
         ) 
     
@@ -154,10 +154,14 @@ class CNN(nn.Module):
         y = self.conv8(y)
         y = self.conv9(y)
         y = self.conv10(y)
-        
+
         y = y.view(y.size(0), -1)
 
         y = self.fc(y)
+
+        for entry in y[0]:
+            if entry <0:
+                print("HAS NEGATIVE VALUES!")
 
         return y
 

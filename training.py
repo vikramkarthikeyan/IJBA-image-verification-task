@@ -74,7 +74,6 @@ if __name__ == "__main__":
     validation_set = IJBAVerification.IJBAVerification(pairs, metadata)
 
     # Initialize model
-    # model = model.Base_CNN(num_classes=len(subjects))
     model = model.MyModel(num_classes=len(subjects))
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=SGD_MOMENTUM)
@@ -107,7 +106,7 @@ if __name__ == "__main__":
         # Train for one Epoch
         trainer.train(model, criterion, optimizer, epoch, use_gpu, subject_class_map, class_subject_map)
 
-        if epoch%40 == 0:
+        if epoch!=0 and epoch%40 == 0:
             # Evaluate on the verification set every 5 epochs
             similarity_scores, actual_scores = trainer.validate(model, epoch, use_gpu)
 
@@ -118,17 +117,6 @@ if __name__ == "__main__":
                         'best_accuracy': 0,
                         'optimizer' : optimizer.state_dict(),
         }, model_name)
-
-        # If this epoch's model proves to be the best till now, save it as best model
-        # if accuracy == max(accuracy, self.highest_accuracy):
-        #     self.highest_accuracy = accuracy
-        #     self.highest_accuracy_5 = accuracy_5
-        #     self.trainer.save_checkpoint({
-        #             'epoch': epoch + 1,
-        #             'state_dict': self.model.state_dict(),
-        #             'best_accuracy': self.highest_accuracy,
-        #             'optimizer' : self.optimizer.state_dict()
-        #     }, best_model_name)
 
 
 
