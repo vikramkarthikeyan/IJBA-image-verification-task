@@ -151,13 +151,6 @@ class Trainer:
                     # Compute Cosine Similarity with normalization in the formula
                     similarity = cosine_similarity(output_1, output_2)
                     similarity = similarity[0][0]
-                    print(similarity)
-
-                    # bring the similarity score between 0 and 1
-                    # if similarity < 0:
-                    #     similarity = 0
-                    # elif similarity > 1:
-                    #     similarity = 1
 
                     similarity_scores.append(similarity)
 
