@@ -154,6 +154,10 @@ class CNN(nn.Module):
         y = self.conv8(y)
         y = self.conv9(y)
         y = self.conv10(y)
+        
+        y = y.view(y.size(0), -1)
+
+        y = self.fc(y)
 
         return y
 
@@ -182,8 +186,8 @@ class MyModel(nn.Module):
         self.output = DNN(num_classes)
     
     def forward(self, x):
-        batch_size = x.size(0)
-        return self.output(self.features(x).view(batch_size, -1))
+        # batch_size = x.size(0)
+        return self.output(self.features(x))
 
 class Base_CNN(nn.Module):
 
