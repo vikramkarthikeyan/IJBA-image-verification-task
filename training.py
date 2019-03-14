@@ -5,7 +5,10 @@ import model
 import torch
 import os
 import numpy as np
+import imp
 
+from torchvision import models
+from resnet50 import resnet50
 from protocol import verification
 from tqdm import tqdm
 from protocol import IJBADataset
@@ -74,7 +77,17 @@ if __name__ == "__main__":
     validation_set = IJBAVerification.IJBAVerification(pairs, metadata)
 
     # Initialize model
-    model = model.MyModel(num_classes=len(subjects))
+    # model = model.MyModel(num_classes=len(subjects))
+    model = resnet50(pretrained=True)
+    num_ftrs = model.fc.in_features
+    print(num_ftrs)
+
+    # Re-Initialize the output layer to the number of subjects in split
+    model.fc = nn.Sequential(
+            nn.Linear(num_ftrs, len(subjects)),
+            nn.Softmax(1)
+        )
+
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=SGD_MOMENTUM)
 
@@ -88,7 +101,7 @@ if __name__ == "__main__":
         print ("Using CPU as GPU is unavailable")  
 
     # Initialize Trainer and Data Loader for training
-    trainer = Trainer.Trainer(training_set, validation_set, subjects)
+    trainer = Trainer.Trainer(training_set, validation_set, subjects, training_batch_size=10)
 
     # Train the model
     summary(model, (3, 202, 203))

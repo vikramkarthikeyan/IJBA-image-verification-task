@@ -1,10 +1,5 @@
 import torch.nn as nn
 
-# Let's start with 4 Convolution layers and work up as we need more layers
-#
-# Issues: The greater the number of layers, the slower is the training process and the percent improvement in 
-# training accuracy decreases
-
 class CNN(nn.Module):
     def __init__(self, num_classes):
         super(CNN, self).__init__()
