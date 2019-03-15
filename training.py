@@ -22,6 +22,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--split", help="The split number in the dataset",
                     type=int)
 
+parser.add_argument('--retrain', dest='retrain', action='store_true', default=False)
+ 
 args = parser.parse_args()
 
 # Hyperparameters
@@ -76,11 +78,11 @@ if __name__ == "__main__":
     # Create IJBA dataset object for validation
     validation_set = IJBAVerification.IJBAVerification(pairs, metadata)
 
+    model_name = './models/split_' + str(split_number) + '_checkpoint.pth.tar'
+
     # Initialize model
-    # model = model.MyModel(num_classes=len(subjects))
     model = resnet50(pretrained=True)
     num_ftrs = model.fc.in_features
-    print(num_ftrs)
 
     # Re-Initialize the output layer to the number of subjects in split
     # model.fc = nn.Sequential(
@@ -93,12 +95,32 @@ if __name__ == "__main__":
             nn.Linear(1024, len(subjects)),
             nn.Softmax(1)
         )
-
+    
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=SGD_MOMENTUM)
 
+    start_epochs = 0 
+
     print("\nChecking if a GPU is available...")
     use_gpu = torch.cuda.is_available()
+
+    # Get checkpoint if available
+    if args.retrain and os.path.isfile(model_name):
+
+        print("Found already trained model for this split...")
+        
+        if use_gpu:
+            checkpoint = torch.load(model_name)
+        else:
+            checkpoint = torch.load(model_name, map_location='cpu')
+
+        model.load_state_dict(checkpoint['state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
+
+        start_epochs = checkpoint['epoch']
+    
+    end_epochs = start_epochs + EPOCHS
+    
     # Initialize new model
     if use_gpu:
         model = model.cuda()
@@ -107,7 +129,7 @@ if __name__ == "__main__":
         print ("Using CPU as GPU is unavailable")  
 
     # Initialize Trainer and Data Loader for training
-    trainer = Trainer.Trainer(training_set, validation_set, subjects, training_batch_size=128)
+    trainer = Trainer.Trainer(training_set, validation_set, subjects, training_batch_size=2)
 
     # Train the model
     summary(model, (3, 202, 203))
@@ -117,10 +139,7 @@ if __name__ == "__main__":
 
     print("\nInitiating training...\n")
 
-    model_name = './models/split_' + str(split_number) + '_checkpoint.pth.tar'
-    best_model_name = './models/best_split_' + str(split_number) + '_model.pth.tar'
-
-    for epoch in range(0, EPOCHS):
+    for epoch in range(start_epochs, end_epochs):
     
         # Train for one Epoch
         trainer.train(model, criterion, optimizer, epoch, use_gpu, subject_class_map, class_subject_map)
