@@ -90,13 +90,20 @@ if __name__ == "__main__":
             nn.Softmax(1)
         )
     
+    print("\nChecking if a GPU is available...")
+    use_gpu = torch.cuda.is_available()
+    
+    # Initialize new model
+    if use_gpu:
+        model = model.cuda()
+        print ("Using GPU")
+    else:
+        print ("Using CPU as GPU is unavailable")  
+    
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=SGD_MOMENTUM)
 
     start_epochs = 0 
-
-    print("\nChecking if a GPU is available...")
-    use_gpu = torch.cuda.is_available()
 
     # Get checkpoint if available
     if args.retrain and os.path.isfile(model_name):
@@ -115,13 +122,6 @@ if __name__ == "__main__":
     
     end_epochs = start_epochs + EPOCHS
     
-    # Initialize new model
-    if use_gpu:
-        model = model.cuda()
-        print ("Using GPU")
-    else:
-        print ("Using CPU as GPU is unavailable")  
-
     # Initialize Trainer and Data Loader for training
     trainer = Trainer.Trainer(training_set, validation_set, subjects, training_batch_size=2)
 
