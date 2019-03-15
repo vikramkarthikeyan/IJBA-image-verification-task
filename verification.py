@@ -87,13 +87,13 @@ if __name__ == "__main__":
     # Initialize model
     model = resnet50()
 
-    # num_ftrs = model.fc.in_features
+    num_ftrs = model.fc.in_features
 
     # Re-Initialize the output layer to the number of subjects in split
-    # model.fc = nn.Sequential(
-    #         nn.Linear(num_ftrs, len(subjects)),
-    #         nn.Softmax(1)
-    #     )
+    model.fc = nn.Sequential(
+            nn.Linear(num_ftrs, len(subjects)),
+            nn.Softmax(1)
+        )
     
 
     print("\nChecking if a GPU is available...")
