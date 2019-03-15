@@ -123,7 +123,7 @@ if __name__ == "__main__":
     end_epochs = start_epochs + EPOCHS
     
     # Initialize Trainer and Data Loader for training
-    trainer = Trainer.Trainer(training_set, validation_set, subjects, training_batch_size=2)
+    trainer = Trainer.Trainer(training_set, validation_set, subjects, training_batch_size=128)
 
     # Train the model
     summary(model, (3, 202, 203))
