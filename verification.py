@@ -15,6 +15,7 @@ from protocol import IJBAVerification
 from protocol import Trainer
 from torchsummary import summary
 from protocol import EarlyStopping
+from resnet50 import resnet50
 
 
 parser = argparse.ArgumentParser()
@@ -84,7 +85,17 @@ if __name__ == "__main__":
     verification_set = IJBAVerification.IJBAVerification(pairs, metadata)
 
     # Initialize model
-    model = model.MyModel(num_classes=len(subjects))
+    # model = model.MyModel(num_classes=len(subjects))
+    model = resnet50()
+
+    num_ftrs = model.fc.in_features
+
+    # Re-Initialize the output layer to the number of subjects in split
+    model.fc = nn.Sequential(
+            nn.Linear(num_ftrs, len(subjects)),
+            nn.Softmax(1)
+        )
+    
 
     print("\nChecking if a GPU is available...")
     use_gpu = torch.cuda.is_available()
@@ -101,7 +112,7 @@ if __name__ == "__main__":
     else:
         checkpoint = torch.load(model_name, map_location='cpu')
     
-    model.load_state_dict(checkpoint['state_dict'])
+    model.load_state_dict(checkpoint['state_dict'], strict=False)
     print("\nLoaded saved model for split:", str(split_number))
 
     # Initialize Trainer and Data Loader for training

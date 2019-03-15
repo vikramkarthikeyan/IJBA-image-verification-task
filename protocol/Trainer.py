@@ -147,13 +147,16 @@ class Trainer:
                     def hook(module, input, output):
                         outputs.append(output)
 
-                    model.fc.avgpool.register_forward_hook(hook)
+                    model.avgpool.register_forward_hook(hook)
 
                     # Compute outputs of two templates
                     output_1 = model(template_left)
-                    output_2 = model(template_right)
+                    output_1 = outputs[0]
 
-                    print(outputs)
+                    outputs = []
+
+                    output_2 = model(template_right)
+                    output_2 = outputs[0]
 
                     # Compute average of all the feature vectors into a single feature vector
                     output_1 = np.average(output_1.cpu().numpy(), axis=0).flatten().reshape(1, -1)
