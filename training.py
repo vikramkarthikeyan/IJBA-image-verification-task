@@ -83,8 +83,14 @@ if __name__ == "__main__":
     print(num_ftrs)
 
     # Re-Initialize the output layer to the number of subjects in split
+    # model.fc = nn.Sequential(
+    #         nn.Linear(num_ftrs, len(subjects)),
+    #         nn.Softmax(1)
+    #     )
     model.fc = nn.Sequential(
-            nn.Linear(num_ftrs, len(subjects)),
+            nn.Linear(2048, 1024),
+            nn.ReLU(inplace=True),
+            nn.Linear(1024, len(subjects)),
             nn.Softmax(1)
         )
 
