@@ -101,7 +101,7 @@ if __name__ == "__main__":
         print ("Using CPU as GPU is unavailable")  
 
     # Initialize Trainer and Data Loader for training
-    trainer = Trainer.Trainer(training_set, validation_set, subjects, training_batch_size=10)
+    trainer = Trainer.Trainer(training_set, validation_set, subjects, training_batch_size=128)
 
     # Train the model
     summary(model, (3, 202, 203))
@@ -118,10 +118,6 @@ if __name__ == "__main__":
     
         # Train for one Epoch
         trainer.train(model, criterion, optimizer, epoch, use_gpu, subject_class_map, class_subject_map)
-
-        if epoch!=0 and epoch%40 == 0:
-            # Evaluate on the verification set every 5 epochs
-            similarity_scores, actual_scores = trainer.validate(model, epoch, use_gpu)
 
         # Checkpointing the model after every epoch
         trainer.save_checkpoint({

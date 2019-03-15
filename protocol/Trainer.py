@@ -128,6 +128,8 @@ class Trainer:
         similarity_scores = []
         actual_scores = []
 
+        
+
         with torch.no_grad():
             for i, (template_1, template_2, subject_1, subject_2, template_n1, template_n2) in enumerate(self.validation_loader):
                 
@@ -140,9 +142,18 @@ class Trainer:
                         template_left = template_left.cuda(non_blocking=True)
                         template_right = template_right.cuda(non_blocking=True)
 
+                    outputs = []
+
+                    def hook(module, input, output):
+                        outputs.append(output)
+
+                    model.fc.avgpool.register_forward_hook(hook)
+
                     # Compute outputs of two templates
-                    output_1 = model.features(template_left)
-                    output_2 = model.features(template_right)
+                    output_1 = model(template_left)
+                    output_2 = model(template_right)
+
+                    print(outputs)
 
                     # Compute average of all the feature vectors into a single feature vector
                     output_1 = np.average(output_1.cpu().numpy(), axis=0).flatten().reshape(1, -1)
