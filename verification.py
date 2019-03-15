@@ -85,7 +85,6 @@ if __name__ == "__main__":
     verification_set = IJBAVerification.IJBAVerification(pairs, metadata)
 
     # Initialize model
-    # model = model.MyModel(num_classes=len(subjects))
     model = resnet50()
 
     num_ftrs = model.fc.in_features
