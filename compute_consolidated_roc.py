@@ -18,7 +18,7 @@ def plot_ROC(fpr, tpr, roc_auc, split_number):
 
 df = pd.read_csv('./ROC/split_' + str(1) + '.csv')
 
-for i in range(2,7):
+for i in range(2, 11):
     temp_df = pd.read_csv('./ROC/split_' + str(i) + '.csv')
     df = df.append(temp_df)
 
