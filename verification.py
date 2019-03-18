@@ -130,6 +130,27 @@ if __name__ == "__main__":
     # Save the results as csv
     save_results(pairs, actual_scores, similarity_scores, split_number)
 
+    # TAR @ FAR Calculation
+    TAR = {
+    0.001: '',
+    0.01: '',
+    0.1: '',
+    0.2: ''
+    }
+
+    for i, FAR in enumerate(fpr):
+        if round(FAR,4) == 0.001:
+            TAR[0.001] = tpr[i]
+        if round(FAR, 2) == 0.01:
+            TAR[0.01] = tpr[i]
+        if round(FAR, 1) == 0.1:
+            TAR[0.1] = tpr[i]
+        if round(FAR, 1) == 0.2:
+            TAR[0.2] = tpr[i]
+
+
+    print("For split : ", str(split_number), TAR)
+
     
 
 
